@@ -1,3 +1,39 @@
+<?php
+session_start();
+require "db.php";
+
+
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+
+    $stmt = $conn->prepare("SELECT id, email, password FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($admin = $result->fetch_assoc()) {
+        if (password_verify($password, $admin["password"])) {
+            session_regenerate_id(true);
+            $_SESSION["admin_id"] = $admin["id"];
+            $_SESSION["admin_username"] = $admin["username"];
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            $message = "Mot de passe incorrect";
+        }
+    } else {
+        $message = "Admin introuvable";
+    }
+}
+?>
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,16 +117,19 @@ a{
 
 
 </style>
-<body>
-    <form action="">
-        <div class="connexion">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password">
-            <button type="submit">Se connecter</button>
 
-        </div>
+<body>
+    <h2>Connexion Admin</h2>
+    <p style="color:red;"><?php echo $message; ?></p>
+
+    <form method="post">
+        <label>Nom d'utilisateur</label><br>
+        <input type="text" name="username" required><br><br>
+
+        <label>Mot de passe</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Se connecter</button>
     </form>
 </body>
 </html>
