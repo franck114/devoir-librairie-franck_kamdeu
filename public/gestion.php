@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             session_regenerate_id(true);
             $_SESSION["admin_id"] = $admin["id"];
             $_SESSION["admin_username"] = $admin["username"];
-            header("Location: dashboard.php");
+            header("Location: index_admin.php");
             exit;
         } else {
             $message = "Mot de passe incorrect";
@@ -31,7 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ?>
 
 
-?>
 
 
 <!DOCTYPE html>
